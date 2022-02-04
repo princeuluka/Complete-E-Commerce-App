@@ -20,8 +20,8 @@ namespace eTickets.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var data = await _service.GetAllAsync();
-            return View(data);
+            var allCinemas = await _service.GetAllAsync();
+            return View(allCinemas);
         }
         //Get: Cinemas/Create
         public IActionResult Create()
@@ -71,8 +71,13 @@ namespace eTickets.Controllers
             {
                 return View(cinema);
             }
-            await _service.UpdateAsync(id, cinema);
-            return RedirectToAction(nameof(Index));
+
+            if (id == cinema.Id)
+            {
+                await _service.UpdateAsync(id, cinema);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(cinema);
         }
 
         //Get: Cinemas/Delete/1

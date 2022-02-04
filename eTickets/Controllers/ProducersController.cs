@@ -74,8 +74,14 @@ namespace eTickets.Controllers
             {
                 return View(producer);
             }
-            await _service.UpdateAsync(id, producer);
-            return RedirectToAction(nameof(Index));
+
+            if (id == producer.Id)
+            {
+                await _service.UpdateAsync(id, producer);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(producer);
+
         }
 
         //Get: Producers/Delete/1
