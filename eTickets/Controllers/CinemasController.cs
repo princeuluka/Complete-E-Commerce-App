@@ -30,7 +30,7 @@ namespace eTickets.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([Bind("FullName,ProfilePictureURL,Bio")] Cinema cinema)
+        public async Task<IActionResult> Create([Bind("Logo,Name,Description")] Cinema cinema)
         {
             if (!ModelState.IsValid)
             {
@@ -65,13 +65,12 @@ namespace eTickets.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,ProfilePictureURL,Bio")] Cinema cinema)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Logo,Name,Description")] Cinema cinema)
         {
             if (!ModelState.IsValid)
             {
                 return View(cinema);
             }
-
             if (id == cinema.Id)
             {
                 await _service.UpdateAsync(id, cinema);
