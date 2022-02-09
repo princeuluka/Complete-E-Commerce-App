@@ -1,5 +1,7 @@
 ﻿using eTickets.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,9 +20,22 @@ namespace eTickets.Data.Cart
         public ShoppingCart(AppDbContext context)
         {
             _context = context;
+
         }
 
-        public void AddItemToCard(Movie movie)
+
+        public static ShoppingCart GetShoppingCart(IServiceProvider services)
+        {
+            ISession session = services.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session;
+            var context = services.GetService<AppDbContext>();
+
+            string cardId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
+            session.SetString("CartId", cardId);
+
+            return new ShoppingCart(context) { ShoppingCartId = cardId };
+        }
+
+        public void AddItemToCart(Movie movie)
         {
             var shoppingCartItem = _context.ShoppingCartItems.FirstOrDefault(n => n.Movie.Id == movie.Id && n.ShoppingCardId == ShoppingCartId);
             if (shoppingCartItem == null)
@@ -72,6 +87,12 @@ namespace eTickets.Data.Cart
             return total;
         }
 
+        public async Task ClearShoppingCartAsync()
+        {
+            var items =await  _context.ShoppingCartItems.Where(n => n.ShoppingCardId == ShoppingCartId).ToListAsync();
+            _context.ShoppingCartItems.RemoveRange(items);
+            await _context.SaveChangesAsync();
+        }
 
 
     }
