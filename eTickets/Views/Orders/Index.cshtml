@@ -1,6 +1,6 @@
 ﻿@model List<Order>
 
-@{ 
+@{
     ViewData["Title"] = "All orders";
 }
 
@@ -16,7 +16,11 @@
                     <th>OrderId</th>
                     <th class="text-center">Items</th>
                     <th class="text-center">Total</th>
-                    <th class="text-center">User</th>
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        <th class="text-center">User</th>
+                    }
+
                 </tr>
             </thead>
             <tbody>
@@ -39,7 +43,10 @@
                         <td class="align-middle">
                             @order.OrderItems.Select(m => m.Movie.Price * m.Amount).Sum().ToString("c")
                         </td>
-                        <td class="align-middle"> - </td>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <td class=" text-center"> @order.User.FullName</td>
+                        }
                     </tr>
                 }
             </tbody>
